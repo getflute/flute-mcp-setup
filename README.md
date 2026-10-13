@@ -167,7 +167,7 @@ when nothing needs to change.
 | Server entry | MCP | `FLUTE_PROFILE` |
 |---|---|---|
 | `flute-sandbox` | Flute CLI MCP | `sandbox` |
-| `flute-prod-readonly` | Flute CLI MCP | `production` (writes stay blocked) |
+| `flute-prod-readonly` | Flute CLI MCP | `production` (writes blocked by default — see below) |
 | `flute-webhooks-sandbox` | Flute Webhooks MCP | `sandbox` |
 | `flute-webhooks-prod` | Flute Webhooks MCP | `production` |
 
@@ -180,10 +180,22 @@ and the absolute path of the CLI (`FLUTE_BIN` or `FLUTE_WEBHOOKS_BIN`). They are
 | Claude Code | user scope, via `claude mcp add-json --scope user` |
 | ChatGPT (Codex) | `~/.codex/config.toml` (or `$CODEX_HOME/config.toml`) |
 
+On Windows, Claude Code installed with npm runs as a `claude.cmd` batch-file shim, which
+the app can't pass its JSON arguments to safely. In that case it leaves Claude Code
+unchanged and the output lists the `claude mcp` commands to paste into Command Prompt
+instead; the banner is amber, or red if no other app was configured. Claude Code installed
+with the native installer (`claude.exe`) is configured automatically.
+
 Only those four entries are touched. Your other servers, settings and TOML comments are
 kept, and any other keys you added to a Flute entry (such as `FLUTE_MERCHANT_ID`) are
 preserved. If another entry already launches the same Flute binary under a different name,
 the output warns you instead of changing it.
+
+That includes `FLUTE_MCP_ALLOW_PROD_WRITES`. `flute-cli-mcp` refuses write tools on a
+production instance unless that variable is `1`, `true`, `yes` or `on`. The app never adds
+it, but if you added it to `flute-prod-readonly` yourself it is kept, so production writes
+stay enabled. The output then shows a ⚠ warning; remove the variable from the entry to block
+writes again.
 
 Before changing a file, the app saves a copy next to it named
 `<file>.bak-YYYYMMDD-HHMMSS`. To undo, copy the backup back over the file.
