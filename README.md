@@ -186,8 +186,8 @@ Before changing a file, the app saves a copy next to it named
 
 ## Building from source
 
-The Rust version is pinned in `rust-toolchain.toml`; with [rustup](https://rustup.rs) it is
-installed automatically the first time you build.
+Requires Rust 1.99.0, which is pinned in `rust-toolchain.toml`; with
+[rustup](https://rustup.rs) it is installed automatically the first time you build.
 
 ```sh
 cargo build --release
