@@ -15,6 +15,10 @@ Pick **Flute Webhooks MCP**, **Flute CLI MCP** or both, press **Configure**, and
 
 The output panel shows every check and every setting it wrote.
 
+<p align="center">
+  <img src="images/flute-mcp-setup-tool.png" width="552" alt="Flute MCP Setup on macOS: Claude Desktop, Claude Code and ChatGPT detected, both MCP toggles ticked, with the Configure button and the Output panel">
+</p>
+
 ## Before you start
 
 You need at least one AI app:
