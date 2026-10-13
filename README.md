@@ -212,8 +212,9 @@ and `cargo test`.
 The **Release** workflow tests and builds the three binaries and publishes them with
 `SHA256SUMS` as a GitHub Release.
 
-To move to a newer Rust, change the version in `rust-toolchain.toml`, fix anything new that
-`cargo clippy --all-targets -- -D warnings` reports, and commit.
+To move to a newer Rust, change the version in both `rust-toolchain.toml` (`channel`) and
+`Cargo.toml` (`rust-version`), fix anything new that `cargo clippy --all-targets -- -D warnings`
+reports, and commit.
 
 ## License
 
