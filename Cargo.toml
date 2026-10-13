@@ -1,0 +1,39 @@
+[package]
+name = "flute-mcp-setup"
+version = "0.1.0"
+edition = "2024"
+description = "GUI that configures the Flute CLI and Flute Webhooks MCP servers for Claude Desktop, Claude Code and ChatGPT"
+license = "MIT"
+repository = "https://github.com/getflute/flute-mcp-setup"
+homepage = "https://github.com/getflute/flute-mcp-setup"
+readme = "README.md"
+
+[dependencies]
+chrono = "0.4.45"
+dirs = "7.0.0"
+eframe = "0.36.2"
+serde_json = { version = "1.0.154", features = ["preserve_order"] }
+tempfile = "3.27.0"
+toml_edit = "0.25.17"
+wait-timeout = "0.2.1"
+
+[dev-dependencies]
+epaint_default_fonts = "0.36.2"
+skrifa = "0.44.0"
+
+# Smaller, faster release binary (13.9 MB → 8.9 MB measured). panic = "abort"
+# is deliberately not set: it would skip temp-file cleanup on a panic.
+[profile.release]
+lto = "fat"
+codegen-units = 1
+strip = true
+
+[lints.rust]
+unsafe_code = "forbid"
+
+[lints.clippy]
+pedantic = { level = "warn", priority = -1 }
+# Too noisy for an app crate: getters, and docs on internal fallible fns.
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"

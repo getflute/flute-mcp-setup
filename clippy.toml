@@ -1,0 +1,2 @@
+# Product names are not code; keep clippy's default list ("..") as well.
+doc-valid-idents = ["ChatGPT", ".."]
