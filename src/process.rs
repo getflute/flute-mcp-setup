@@ -119,9 +119,12 @@ impl CommandRunner for SystemRunner {
 }
 
 const DRAIN_GRACE: Duration = Duration::from_millis(200);
+/// Bytes kept per pipe. Anything past this is read and discarded, so a noisy
+/// child can't exhaust memory and still never blocks on a full pipe.
+const MAX_CAPTURE: usize = 1 << 20;
 
-/// Reads a pipe on a thread into a shared buffer, so the text read so far is
-/// available even if the pipe never closes.
+/// Reads a pipe on a thread into a shared buffer (up to [`MAX_CAPTURE`] bytes),
+/// so the text read so far is available even if the pipe never closes.
 struct Drain {
     buf: Arc<Mutex<Vec<u8>>>,
     handle: JoinHandle<()>,
@@ -138,7 +141,9 @@ impl Drain {
                 if n == 0 {
                     break;
                 }
-                sink.lock().unwrap().extend_from_slice(&chunk[..n]);
+                let mut buf = sink.lock().unwrap();
+                let keep = n.min(MAX_CAPTURE.saturating_sub(buf.len()));
+                buf.extend_from_slice(&chunk[..keep]);
             }
         });
         Drain { buf, handle }
@@ -191,6 +196,19 @@ mod tests {
             started.elapsed()
         );
         assert_eq!(out.stdout, "hi\n");
+    }
+
+    #[test]
+    fn flooding_output_is_capped_and_the_child_still_finishes() {
+        let out = sh(
+            "head -c 3000000 /dev/zero | tr '\\0' x; echo done >&2",
+            10_000,
+        )
+        .unwrap();
+        assert!(out.success);
+        assert_eq!(out.stdout.len(), MAX_CAPTURE);
+        assert!(out.stdout.bytes().all(|b| b == b'x'));
+        assert_eq!(out.stderr, "done\n");
     }
 
     #[test]
